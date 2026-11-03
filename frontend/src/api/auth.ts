@@ -3,6 +3,7 @@ const API_URL = "http://localhost:8080/api";
 
 export type AuthUser = {
   username: string;
+  displayName: string;
 };
 
 async function readResponse(response: Response) {
@@ -29,7 +30,11 @@ export async function login(
   });
 
   const data = await readResponse(response);
-  return { username: data.username };
+
+  return {
+    username: data.username,
+    displayName: data.displayName,
+  };
 }
 
 export async function getMe(): Promise<AuthUser> {
@@ -54,6 +59,19 @@ export async function register(
   await readResponse(response);
 }
 
+export async function updateProfile(
+  displayName: string
+): Promise<AuthUser> {
+  const response = await fetch(`${API_URL}/auth/profile`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ displayName }),
+  });
+
+  return readResponse(response);
+}
+
 export async function logout(): Promise<void> {
   const response = await fetch(`${API_URL}/auth/logout`, {
     method: "POST",
@@ -62,3 +80,4 @@ export async function logout(): Promise<void> {
 
   await readResponse(response);
 }
+

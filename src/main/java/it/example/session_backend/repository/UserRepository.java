@@ -17,7 +17,8 @@ public class UserRepository {
         new User(
             rs.getLong("id"),
             rs.getString("username"),
-            rs.getString("password_hash")
+            rs.getString("password_hash"),
+            rs.getString("display_name")
         );
 
     public UserRepository(JdbcTemplate jdbcTemplate) {
@@ -26,7 +27,11 @@ public class UserRepository {
 
     public Optional<User> findByUsername(String username) {
         return jdbcTemplate.query(
-            "SELECT id, username, password_hash FROM users WHERE username = ?",
+            """
+            SELECT id, username, password_hash, display_name
+            FROM users
+            WHERE username = ?
+            """,
             userRowMapper,
             username
         ).stream().findFirst();
@@ -35,13 +40,29 @@ public class UserRepository {
     public User save(String username, String passwordHash) {
         return jdbcTemplate.queryForObject(
             """
-            INSERT INTO users (username, password_hash)
-            VALUES (?, ?)
-            RETURNING id, username, password_hash
+            INSERT INTO users (username, password_hash, display_name)
+            VALUES (?, ?, ?)
+            RETURNING id, username, password_hash, display_name
             """,
             userRowMapper,
             username,
-            passwordHash
+            passwordHash,
+            username
+        );
+    }
+
+    public User updateDisplayName(String username, String displayName) {
+        return jdbcTemplate.queryForObject(
+            """
+            UPDATE users
+            SET display_name = ?
+            WHERE username = ?
+            RETURNING id, username, password_hash, display_name
+            """,
+            userRowMapper,
+            displayName,
+            username
         );
     }
 }
+

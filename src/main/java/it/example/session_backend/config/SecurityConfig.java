@@ -28,8 +28,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(
-            List.of("http://localhost:5173")
+        config.setAllowedOriginPatterns(
+            List.of("http://localhost:*")
         );
 
         config.setAllowedMethods(
@@ -60,7 +60,7 @@ public class SecurityConfig {
             )
 
             // Solo per lo sviluppo locale.
-            // Prima della pubblicazione ripristineremo la protezione CSRF.
+            // Prima della pubblicazione ripristinare la protezione CSRF.
             .csrf(csrf -> csrf.disable())
 
             .sessionManagement(session -> session
@@ -92,3 +92,4 @@ public class SecurityConfig {
         return http.build();
     }
 }
+

@@ -37,7 +37,8 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CREATED).body(
                 Map.of(
                     "id", user.getId(),
-                    "username", user.getUsername()
+                    "username", user.getUsername(),
+                    "displayName", user.getDisplayName()
                 )
             );
         } catch (IllegalArgumentException ex) {
@@ -80,10 +81,13 @@ public class AuthController {
             context
         );
 
+        User user = authService.getUser(request.username());
+
         return ResponseEntity.ok(
             Map.of(
                 "message", "Login effettuato",
-                "username", request.username()
+                "username", user.getUsername(),
+                "displayName", user.getDisplayName()
             )
         );
     }
@@ -98,9 +102,46 @@ public class AuthController {
             );
         }
 
+        User user = authService.getUser(username.toString());
+
         return ResponseEntity.ok(
-            Map.of("username", username)
+            Map.of(
+                "username", user.getUsername(),
+                "displayName", user.getDisplayName()
+            )
         );
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateProfile(
+            @RequestBody ProfileRequest request,
+            HttpSession session) {
+
+        Object username = session.getAttribute("username");
+
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                Map.of("error", "Non autenticato")
+            );
+        }
+
+        try {
+            User user = authService.updateDisplayName(
+                username.toString(),
+                request.displayName()
+            );
+
+            return ResponseEntity.ok(
+                Map.of(
+                    "username", user.getUsername(),
+                    "displayName", user.getDisplayName()
+                )
+            );
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(
+                Map.of("error", ex.getMessage())
+            );
+        }
     }
 
     @PostMapping("/logout")
@@ -115,4 +156,8 @@ public class AuthController {
 
     public record RegisterRequest(String username, String password) {
     }
+
+    public record ProfileRequest(String displayName) {
+    }
 }
+

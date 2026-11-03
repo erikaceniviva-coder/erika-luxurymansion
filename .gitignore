@@ -7,3 +7,20 @@ frontend/dist/
 .DS_Store
 *.log
 cookies.txt
+
+# Dependencies and builds
+node_modules/
+frontend/node_modules/
+frontend/dist/
+target/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+cookies.txt
+
+# IDE and system
+.DS_Store
+.idea/
+.vscode/

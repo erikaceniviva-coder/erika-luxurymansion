@@ -6,6 +6,7 @@ public class User {
     private Long id;
     private String username;
     private String passwordHash;
+    private String displayName;
 
     public User() {
     }
@@ -14,6 +15,14 @@ public class User {
         this.id = id;
         this.username = username;
         this.passwordHash = passwordHash;
+        this.displayName = username;
+    }
+
+    public User(Long id, String username, String passwordHash, String displayName) {
+        this.id = id;
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.displayName = displayName;
     }
 
     public Long getId() {
@@ -39,4 +48,13 @@ public class User {
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 }
+
